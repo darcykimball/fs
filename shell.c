@@ -1,3 +1,4 @@
+#define _GNU_SOURCE // for getline()
 #include <stdio.h>
 #include <stddef.h>
 #include <string.h>
@@ -16,6 +17,7 @@ void loop(command_pair* command_map, size_t n_commands) {
   size_t line_len = 0; // Number of characters in read line
   char* tokens[MAX_N_TOKENS]; // To hold tokens for a given line
   size_t n_tokens; // Number of tokens for a given line
+  command_fn cmd_fn; // Command to invoke
 
   // Main loop
   while (1) {
@@ -31,13 +33,30 @@ void loop(command_pair* command_map, size_t n_commands) {
     // Tokenize
     n_tokens = tokenize(input, tokens, MAX_N_TOKENS);
 
+    // Special case: user's spamming enter key
+    if (n_tokens == 0) {
+      continue;
+    }
+
     // FIXME: remove!
     // echo back
     printf("%s", input);
+    
+    for (size_t i = 0; i < n_tokens; i++) {
+      printf("%s\n", tokens[i]);
+    }
+
+    // Lookup the command
+    if ((cmd_fn = lookup(command_map, n_commands, tokens[0])) == NULL) {
+      printf("Error: command %s not found.\n", tokens[0]);
+    } 
   }
 
   // Free buffer alloc'd by getline()
   free(input);
+
+  // Prettier.
+  printf("\n");
 }
 
 // Split input string on whitespace, setting 'tokens' to contain the array
@@ -49,7 +68,7 @@ static size_t tokenize(char* str, char** tokens, size_t max_tokens) {
                       // NULL after
 
   // Consume as many tokens as possible
-  while ((token = strtok(strarg, " ")) != NULL) {
+  while ((token = strtok(strarg, " \n")) != NULL) {
     // Setup argument for subsequent calls
     if (token_count == 0) {
       strarg = NULL;
@@ -62,6 +81,8 @@ static size_t tokenize(char* str, char** tokens, size_t max_tokens) {
       // No space left
       break;
     }
+
+    token_count++;
   }
 
   return token_count;
