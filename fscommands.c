@@ -265,7 +265,7 @@ static fs_node* find(char* filepath) {
   char* tokens[MAX_N_TOKENS]; // To hold filename/dirname tokens
   size_t n_tokens; // Number of tokens in the filepath
   fs_node* curr_node; // Temp node for traversing
-  int found = 0; // Flag for finding filenames
+  int found_index = -1; // Flag for finding filenames
   unsigned int num_children; // Number of children in a node
 
   // Split the filepath
@@ -285,22 +285,24 @@ static fs_node* find(char* filepath) {
   // matches. If no name is found on a level, the search was unsuccessful
   for (size_t i = 0; i < n_tokens; i++) {
     // Check for this token as a name in this node's children
-    found = 0;
+    found_index = -1;
     num_children = curr_node->num_children;
 
     // XXX: this is inefficient
     for (unsigned int c = 0; c < num_children; c++) {
       if (strcmp(curr_node->children[c]->entry->name, tokens[i]) == 0) {
         // Found match
-        found = 1;
-        curr_node = curr_node->children[c];
+        found_index = c;
       }
     }
 
     // Check that we found a matching name on this level
-    if (!found) {
+    if (found_index == -1) {
       // Something didn't match; exit
       return NULL;
+    } else {
+      // Move on deeper
+      curr_node = curr_node->children[found_index];
     }
   }
 
