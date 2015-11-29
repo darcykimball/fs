@@ -90,6 +90,12 @@ fs_node* new_fs_tree();
 void insert_inode(unsigned int block_index, unsigned int offset,
   fs_entry* entry);
 
+// Add a child to a directory node; returns -1 for error, 0 otherwise
+int insert_child(fs_node* new_child, fs_node* dir);
+
+// Remove a child from its parent node's children list
+void unlink_child(fs_node* child);
+
 //
 // Debugging/print functions TODO
 //

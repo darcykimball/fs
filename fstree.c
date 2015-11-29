@@ -58,15 +58,8 @@ fs_node* new_fs_node(fs_entry* entry, fs_node* parent) {
     return new_node;
   }
 
-  // Link to parent; check for space first
-  if (parent->num_children == MAX_DIR_FILES) {
-    // No space
-    fprintf(stderr, "new_fs_node(): no space in parent's children list!");
-    return NULL;
-  }
-
-  parent->children[parent->num_children] = new_node;
-  parent->num_children++;
+  // Insert the new child
+  insert_child(new_node, parent);
 
   return new_node;
 }
@@ -123,6 +116,49 @@ void insert_inode(unsigned int block_index, unsigned int offset,
   }
 }
 
+int insert_child(fs_node* new_child, fs_node* dir) {
+  // Sanity check
+  if (new_child == NULL || dir == NULL) {
+    fprintf(stderr, "insert_child(): null ptr!!\n");
+    return -1;
+  }
+
+  // Link to parent; check for space first
+  if (dir->num_children == MAX_DIR_FILES) {
+    // No space
+    fprintf(stderr, "insert_child(): no space in parent's children list!");
+    return -1;
+  }
+
+  dir->children[dir->num_children] = new_child;
+  dir->num_children++;
+
+  return 0;
+}
+
+void unlink_child(fs_node* child) {
+  fs_node* parent = child->parent; // For convenience
+  unsigned int index = 0; // Index of child in parent's children
+
+  // Look through each of the children
+  for (unsigned int c = 0; c < parent->num_children; c++) {
+    if (parent->children[c] == child) {
+      // Found it; store the index
+      index = c;
+      break;
+    }
+  }
+
+  // Shift over the rest
+  for (unsigned int c = index; c < parent->num_children - 1; c++) {
+    parent->children[c] = parent->children[c + 1];
+  }
+
+  // Update count, parent
+  parent->num_children--;
+  child->parent = NULL;
+}
+
 void dump_path(fs_node* node) {
   // Print the parent before this
   if (node->parent != NULL) {
@@ -132,3 +168,4 @@ void dump_path(fs_node* node) {
 
   printf("%s", node->entry->name);
 }
+
