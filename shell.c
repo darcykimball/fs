@@ -40,8 +40,7 @@ void loop(command_pair* command_map, size_t n_commands) {
 
     // FIXME: remove!
     // echo back
-    printf("%s", input);
-    
+    printf("Command: %s\n", input);
     for (size_t i = 0; i < n_tokens; i++) {
       printf("%s\n", tokens[i]);
     }
@@ -49,7 +48,10 @@ void loop(command_pair* command_map, size_t n_commands) {
     // Lookup the command
     if ((cmd_fn = lookup(command_map, n_commands, tokens[0])) == NULL) {
       printf("Error: command %s not found.\n", tokens[0]);
-    } 
+    } else {
+      // Invoke the command
+      cmd_fn(n_tokens, tokens);
+    }
   }
 
   // Free buffer alloc'd by getline()
