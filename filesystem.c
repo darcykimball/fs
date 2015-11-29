@@ -3,7 +3,7 @@
 
 int debug = 0; // Debug message flag
 unsigned char disk[DISK_SIZE]; // The 'hard disk'
-unsigned int next_free_block = 0; // Index of next free block
+int next_free_block = 0; // Index of next free block
 
 void init_disk() {
   printf("init_disk(): Initializing disk...\n");
@@ -41,16 +41,23 @@ int get_block() {
   unsigned int free_index; // Return value
 
   // Check for space
-  if (blocks[next_free_block].next == -1) {
+  if (next_free_block == -1) {
     fprintf(stderr, "get_block(): no space left!\n");
 
     // Return error
     return -1;
   }
 
-  // Unlink head from free list
   free_index = next_free_block;
-  next_free_block = blocks[next_free_block].next;
+
+  // Check if this was the last block
+  if (blocks[next_free_block].next == -1) {
+    // Set to -1 to indicate fullness
+    next_free_block = -1;
+  } else {
+    // Unlink head from free list
+    next_free_block = blocks[next_free_block].next;
+  }
 
   return free_index; 
 }

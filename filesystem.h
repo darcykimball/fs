@@ -25,7 +25,7 @@ typedef struct {
 } block;
 
 extern unsigned char disk[DISK_SIZE]; // The 'disk drive'
-extern unsigned int next_free_block; // Index of the next free block (head of
+extern int next_free_block; // Index of the next free block (head of
                                      // free list
 
 //
