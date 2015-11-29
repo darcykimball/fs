@@ -59,8 +59,11 @@ fs_node* new_fs_node(fs_entry* entry, fs_node* parent) {
     return NULL;
   }
 
-  parent->children[parent->num_children] = new_node;
-  parent->num_children++;
+  // Check for special case: creating root node
+  if (parent != NULL) {
+    parent->children[parent->num_children] = new_node;
+    parent->num_children++;
+  }
 
   return new_node;
 }
@@ -81,4 +84,19 @@ void delete_fs_node(fs_node** nodepp) {
 
   // Invalidate the pointer to node
   *nodepp = NULL;
+}
+
+fs_node* new_fs_tree() {
+  fs_entry* dir_entry; // The directory entry
+  permissions perms = { 1, 1 }; // Both read/write
+
+  dir_entry = new_fs_entry(
+    "root",
+    DIRY,
+    ROOT_USER_ID,
+    perms,
+    0
+  );
+
+  return new_fs_node(dir_entry, NULL);
 }

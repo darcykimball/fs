@@ -3,6 +3,7 @@
 
 #define MAX_DIR_FILES 64 // This was arbitrarily chosen
 #define MAX_NM_LEN 128 // Max filename length
+#define ROOT_USER_ID 0 // ID of root
 
 //
 // The filesystem directory, as represented as nodes with multiple children.
@@ -77,5 +78,8 @@ fs_node* new_fs_node(fs_entry* entry, fs_node* parent);
 // caller must make sure that the actual files on disk are deleted (blocks
 // freed, etc.).
 void delete_fs_node(fs_node** nodepp);
+
+// Make a fresh filesystem tree with a single directory.
+fs_node* new_fs_tree();
 
 #endif // FSTREE_H
