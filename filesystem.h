@@ -24,35 +24,20 @@ typedef struct {
 } block;
 
 extern unsigned char disk[DISK_SIZE]; // The 'disk drive'
-extern unsigned int next_free_block; // Index of the next free block
+extern unsigned int next_free_block; // Index of the next free block (head of
+                                     // free list
 
 //
 // Functions
 //
 
 // Initialize blocks on disk, i.e. the free list
-void init_disk_blocks() {
-  block* curr = (block*)disk; // Current block being initialized
-
-  // Set each block to point to the next
-  for (unsigned int i = 0; i < NUM_BLOCKS - 1; i++) {
-    // Set to point to immediate successor
-    curr->next = i + 1; 
-    
-    // Initialize rest of block to zero (for debugging; easier to see)
-    memset(curr, 0, sizeof(block));
-
-    curr++;
-  }
-
-  // Set last block to point to 'null'
-  curr->next = -1;
-}
+void init_disk_blocks();
 
 // Request a block. Returns the index of the block or -1 if no space is left.
 unsigned int get_block();
 
 // Free a block.
-void free_block();
+void free_block(unsigned int block_index);
 
 #endif // FILESYSTEM_H
