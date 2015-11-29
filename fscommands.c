@@ -52,8 +52,9 @@ void currentd(size_t argc, char** argv) {
     return;
   }
 
-  // Print out the name
-  printf("%s\n", curr_dir_node->entry->name);
+  // Print out the full path
+  dump_path(curr_dir_node); 
+  printf("\n");
 }
 
 void chdir(size_t argc, char** argv) {

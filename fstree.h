@@ -60,6 +60,7 @@ typedef struct fs_node {
   fs_entry* entry; // Pointer to entry associated with this node
   struct fs_node* children[MAX_DIR_FILES]; // List of children; NULL for regular files
   unsigned int num_children; // Number of children
+  struct fs_node* parent; // Parent of this node; makes navigating easier
 } fs_node;
 
 //
@@ -93,7 +94,10 @@ void insert_inode(unsigned int block_index, unsigned int offset,
 // Debugging/print functions TODO
 //
 
-// Dump the tree rooted at the given node
+// Dump the tree rooted at the given node TODO?
 void dump_fs_tree(fs_node* node);
+
+// Print out the full path ending at the given node
+void dump_path(fs_node* node);
 
 #endif // FSTREE_H

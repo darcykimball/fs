@@ -51,6 +51,7 @@ fs_node* new_fs_node(fs_entry* entry, fs_node* parent) {
   new_node->entry = entry;
   memset(new_node->children, 0, sizeof(new_node->children));
   new_node->num_children = 0;
+  new_node->parent = parent;
 
   // Check for special case: creating root node
   if (parent == NULL) {
@@ -120,4 +121,14 @@ void insert_inode(unsigned int block_index, unsigned int offset,
   } else {
     entry->inode_tail->next = new_inode;
   }
+}
+
+void dump_path(fs_node* node) {
+  // Print the parent before this
+  if (node->parent != NULL) {
+    dump_path(node->parent);
+    printf("/");
+  }
+
+  printf("%s", node->entry->name);
 }
