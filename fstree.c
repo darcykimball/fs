@@ -90,7 +90,6 @@ void delete_fs_node(fs_node** nodepp) {
 
 fs_node* new_fs_tree() {
   fs_entry* dir_entry; // The directory entry
-  permissions perms = { 1, 1 }; // Both read/write
 
   printf("new_fs_tree(): Initializing filesystem tree...\n");
 
@@ -98,7 +97,7 @@ fs_node* new_fs_tree() {
     "root",
     DIRY,
     ROOT_USER_ID,
-    perms,
+    RDWR,
     0
   );
 

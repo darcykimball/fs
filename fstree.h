@@ -28,9 +28,10 @@ typedef enum {
 typedef unsigned int user_id;
 
 // Permissions
-typedef struct {
-  unsigned char read: 1; // 1 if has read permission
-  unsigned char write: 1; // 1 if has write permission
+typedef enum {
+  READ, // Read permission
+  RDWR, // Read/write
+  SYML  // Symbolic link!?? FIXME
 } permissions;
 
 // An index node; to be used in singly linked list

@@ -74,6 +74,15 @@ void chdir(size_t argc, char** argv) {
 }
 
 void maked(size_t argc, char** argv) {
+  fs_node* dir; // Node to be created for new direcory
+
+  // Check args
+  if (argc > 2) {
+    fprintf(stderr, "maked(): I take exactly 1 argument\n");
+    return;
+  }
+  
+  dir = new_dir(argv[1], curr_user, RDWR, curr_dir_node);
 }
 
 void createf(size_t argc, char** argv) {
@@ -81,7 +90,6 @@ void createf(size_t argc, char** argv) {
   unsigned int size_bytes; // Size in bytes of the new file
   char* end; // For use with strtol()
   file_type type; // File type
-  permissions perms = { 1, 1 };
 
   // Check args
   if (argc != 4) {
@@ -126,7 +134,7 @@ void createf(size_t argc, char** argv) {
   printf("Creating new file with name %s, type %d, and size %u\n",
     argv[1], type, size_bytes);
   
-  file = new_file(argv[1], type, curr_user, perms, size_bytes, curr_dir_node);
+  file = new_file(argv[1], type, curr_user, RDWR, size_bytes, curr_dir_node);
 
   // TODO/FIXME: implement users/permissions!!
 }
