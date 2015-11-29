@@ -52,6 +52,11 @@ fs_node* new_fs_node(fs_entry* entry, fs_node* parent) {
   memset(new_node->children, 0, sizeof(new_node->children));
   new_node->num_children = 0;
 
+  // Check for special case: creating root node
+  if (parent == NULL) {
+    return new_node;
+  }
+
   // Link to parent; check for space first
   if (parent->num_children == MAX_DIR_FILES) {
     // No space
@@ -59,11 +64,8 @@ fs_node* new_fs_node(fs_entry* entry, fs_node* parent) {
     return NULL;
   }
 
-  // Check for special case: creating root node
-  if (parent != NULL) {
-    parent->children[parent->num_children] = new_node;
-    parent->num_children++;
-  }
+  parent->children[parent->num_children] = new_node;
+  parent->num_children++;
 
   return new_node;
 }
@@ -89,6 +91,8 @@ void delete_fs_node(fs_node** nodepp) {
 fs_node* new_fs_tree() {
   fs_entry* dir_entry; // The directory entry
   permissions perms = { 1, 1 }; // Both read/write
+
+  printf("new_fs_tree(): Initializing filesystem tree...\n");
 
   dir_entry = new_fs_entry(
     "root",

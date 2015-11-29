@@ -5,12 +5,11 @@
 
 #define DISK_SIZE 1024
 #define BLOCK_SIZE 64
+#define NUM_BLOCKS (DISK_SIZE/BLOCK_SIZE)
 
 //
 // This file has to do with mostly 'hardware', lower-level details.
 //
-
-const unsigned int NUM_BLOCKS = DISK_SIZE/BLOCK_SIZE;
 
 // Stores the file/directory metadata; doesn't actually 'reside on disk' 
 typedef struct {

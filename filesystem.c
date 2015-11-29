@@ -5,6 +5,8 @@ unsigned char disk[DISK_SIZE]; // The 'hard disk'
 unsigned int next_free_block = 0; // Index of next free block
 
 void init_disk() {
+  printf("init_disk(): Initializing disk...\n");
+
   // Wipe the disk and setup free list
   init_disk_blocks();
   next_free_block = 0;
