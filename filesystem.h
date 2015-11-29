@@ -38,7 +38,7 @@ void init_disk();
 void init_disk_blocks();
 
 // Request a block. Returns the index of the block or -1 if no space is left.
-unsigned int get_block();
+int get_block();
 
 // Free a block.
 void free_block(unsigned int block_index);

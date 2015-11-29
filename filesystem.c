@@ -29,7 +29,7 @@ void init_disk_blocks() {
 }
 
 
-unsigned int get_block() {
+int get_block() {
   block* blocks = (block*)disk; // Pointer to disk as blocks
   unsigned int free_index; // Return value
 
