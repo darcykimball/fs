@@ -251,7 +251,35 @@ void listf(size_t argc, char** argv) {
 }
 
 void sizef(size_t argc, char** argv) {
+  fs_node* file; // File node
+  char name[BUFSIZ]; // For saving arguments since find() may mangle it
 
+  // Check args
+  if (argc != 2) {
+    fprintf(stderr, "sizef(): I take exactly 1 argument\n");
+    return;
+  }
+
+  // Save name
+  strcpy(name, argv[1]); 
+
+  // Find the file
+  file = find(argv[1]);
+
+  if (file == NULL) {
+    fprintf(stderr, "sizef(): file %s not found\n", name);
+    return;
+  }
+
+  // Check that it's a regular file
+  if (file->entry->type == DIRY) {
+    fprintf(stderr, "sizef(): %s is not a regular file\n", name);
+    return;
+  }
+
+  // Print out its size in blocks and bytes
+  printf("Blocks: %u\n", file->entry->size_blocks);
+  printf("Bytes: %u\n", file->entry->size_bytes);
 }
 
 void movf(size_t argc, char** argv) {
