@@ -4,6 +4,9 @@
 #include "fstree.h"
 #include "filesystem.h"
 
+// Helper for delete_inode_list()
+static void delete_inode(index_node* inode);
+
 fs_entry* new_fs_entry(char* name, file_type type, user_id user,
   permissions perms, unsigned int size_bytes) {
   size_t nmlen; // Length of name
@@ -71,6 +74,9 @@ void delete_fs_node(fs_node** nodepp) {
   for (unsigned int i = 0; i < nodeptr->num_children; i++) {
     delete_fs_node(&(nodeptr->children[i]));
   }
+
+  // Delete the index node list
+  delete_inode_list(nodeptr->entry);
 
   // Delete the file entry
   free(nodeptr->entry);
@@ -158,6 +164,24 @@ void unlink_child(fs_node* child) {
   // Update count, parent
   parent->num_children--;
   child->parent = NULL;
+}
+
+void delete_inode_list(fs_entry* entry) {
+  // Check for empty list
+  if (entry->inode_head == NULL) {
+    return;
+  } 
+
+  // Recursively delete nodes
+  delete_inode(entry->inode_head);
+}
+
+static void delete_inode(index_node* inode) {
+  if (inode->next != NULL) {
+    delete_inode(inode->next);
+  }
+
+  free(inode); 
 }
 
 void dump_path(fs_node* node) {

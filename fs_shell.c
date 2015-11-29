@@ -13,4 +13,7 @@ int main() {
   curr_dir_node = root_node;
 
   loop(command_map, NUM_COMMANDS);
+
+  // Cleanup
+  delete_fs_node(&root_node);
 }

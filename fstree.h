@@ -96,6 +96,9 @@ int insert_child(fs_node* new_child, fs_node* dir);
 // Remove a child from its parent node's children list
 void unlink_child(fs_node* child);
 
+// Delete the index node list
+void delete_inode_list(fs_entry* entry);
+
 //
 // Debugging/print functions TODO
 //
