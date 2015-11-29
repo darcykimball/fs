@@ -113,6 +113,7 @@ void insert_inode(unsigned int block_index, unsigned int offset,
     entry->inode_head = entry->inode_tail = new_inode;
   } else {
     entry->inode_tail->next = new_inode;
+    entry->inode_tail = new_inode;
   }
 }
 
