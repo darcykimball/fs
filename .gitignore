@@ -1,3 +1,4 @@
 *.o
 test_shell
-.*.swp
+.*
+fs_shell
