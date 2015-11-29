@@ -7,6 +7,8 @@
 // (Helper) functions for actually creating files, i.e. using disk calls
 // and doing the dirty work of updating the directory/file tree details.
 // 
+// XXX: Files cannot be 0 bytes. This is an arbitrary decision that I made.
+//
 
 // Make a new file of a certain size. Returns NULL if no space is available.
 fs_node* new_file(char* name, file_type type, user_id user, permissions perms,
