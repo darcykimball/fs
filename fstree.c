@@ -115,5 +115,10 @@ void insert_inode(unsigned int block_index, unsigned int offset,
   new_inode->offset = offset;
   new_inode->next = NULL;
 
-  tail->next = new_inode;
+  // Check for special case: first insertion, i.e. tail is NULL
+  if (tail == NULL) {
+    tail = new_inode;
+  } else {
+    tail->next = new_inode;
+  }
 }

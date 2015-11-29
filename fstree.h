@@ -88,4 +88,11 @@ fs_node* new_fs_tree();
 void insert_inode(unsigned int block_index, unsigned int offset,
   index_node* tail);
 
+//
+// Debugging/print functions TODO
+//
+
+// Dump the tree rooted at the given node
+void dump_fs_tree(fs_node* node);
+
 #endif // FSTREE_H
