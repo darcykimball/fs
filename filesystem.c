@@ -1,6 +1,15 @@
 #include <stdio.h>
 #include "filesystem.h"
 
+unsigned char disk[DISK_SIZE]; // The 'hard disk'
+unsigned int next_free_block = 0; // Index of next free block
+
+void init_disk() {
+  // Wipe the disk and setup free list
+  init_disk_blocks();
+  next_free_block = 0;
+}
+
 void init_disk_blocks() {
   block* curr = (block*)disk; // Current block being initialized
 

@@ -31,6 +31,9 @@ extern unsigned int next_free_block; // Index of the next free block (head of
 // Functions
 //
 
+// Initialize a new disk
+void init_disk();
+
 // Initialize blocks on disk, i.e. the free list
 void init_disk_blocks();
 
