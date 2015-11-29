@@ -13,7 +13,7 @@ user_id curr_user = 0; // FIXME!!
 
 // Split input string on slashes, setting 'tokens' to contain the array
 // of token strings. Returns the number of tokens.
-static size_t splitpath(char* str, char** tokens, size_t max_tokens);
+static size_t splitpath(char* str, char* tokens[], size_t max_tokens);
 
 // Helper function; find the file/directory with the given path. Returns NULL
 // if not found
@@ -234,7 +234,7 @@ void formatd(size_t argc, char** argv) {
 
 // Split input string on slashes, setting 'tokens' to contain the array
 // of token strings. Returns the number of tokens.
-static size_t splitpath(char* str, char** tokens, size_t max_tokens) {
+static size_t splitpath(char* str, char* tokens[], size_t max_tokens) {
   char* token; // Token returned by strtok() 
   size_t token_count = 0; // Number of tokens consumed so far
   char* strarg = str; // Argument to strtok() must be 'str' on first call,
@@ -269,7 +269,7 @@ static fs_node* find(char* filepath) {
   unsigned int num_children; // Number of children in a node
 
   // Split the filepath
-  n_tokens = splitpath(filepath, &tokens, MAX_N_TOKENS);
+  n_tokens = splitpath(filepath, tokens, MAX_N_TOKENS);
 
   // Start traversing from the top ("/"); root if leading slash, current dir
   // otherwise
