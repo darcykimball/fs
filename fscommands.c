@@ -243,7 +243,8 @@ void listf(size_t argc, char** argv) {
     // Go through its index block list
     inode = file->entry->inode_head; 
     while (inode != NULL) {
-      printf("Index = %u, Offset = %u\n", inode->index, inode->offset);
+      printf("Index = %u, Offset = %u, Address (on disk) = %u\n", inode->index,
+        inode->offset, inode->index * sizeof(block));
       inode = inode->next;
     }
   }
