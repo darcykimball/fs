@@ -169,7 +169,35 @@ void trncf(size_t argc, char** argv) {
 }
 
 void deletefd(size_t argc, char** argv) {
+  fs_node* file; // File or directory to delete
+  char name[BUFSIZ]; // For saving arguments since find() may mangle it
+
   // TODO/FIXME: implement users/permissions!!
+  if (argc < 2) {
+    fprintf(stderr, "deletefd(): I take at least 1 argument\n");
+  }
+
+  // Delete one-by-one
+  for (size_t i = 1; i < argc; i++) {
+    // Save the name
+    strcpy(name, argv[i]);
+
+    // Find the file/directory
+    file = find(argv[i]); 
+
+    if (file == NULL) {
+      fprintf(stderr, "deletefd(): file or directory %s not found\n", name);
+      continue;
+    }
+
+    // Check if it's a directory
+    if (file->entry->type == DIRY) {
+      // TODO/FIXME
+    } else {
+      // This is a regular file
+      delete_file(file);
+    }
+  }
 }
 
 void listd(size_t argc, char** argv) {

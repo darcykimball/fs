@@ -94,7 +94,28 @@ fs_node* new_dir(char* name, user_id user, permissions perms,
   return new_fs_node(entry, curr_dir_node);
 }
 
-void delete_file(fs_node* file_node);
+void delete_file(fs_node* file_node) {
+  // For traversing through index node list
+  index_node* inode = file_node->entry->inode_head; 
 
-void delete_dir(fs_node* dir_node);
+  // Unlink from parent
+  unlink_child(file_node);
+
+  // Free the disk blocks TODO
+  while (inode != NULL) {
+    // Free this block, i.e. return it to the free list
+    free_block(inode->index);
+
+    inode = inode->next;
+  } 
+  
+  // Delete the node
+  delete_fs_node(&file_node);
+}
+
+
+void delete_dir(fs_node* dir_node) {
+  index_node* inode; // For traversing through index node list
+  // TODO
+}
 
