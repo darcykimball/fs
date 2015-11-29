@@ -37,6 +37,7 @@ typedef struct {
 typedef struct index_node {
   unsigned int index; // Index of block on disk
   unsigned int offset; // Offset into the block for the end of the used portion
+                       // A value of 0 means the whole block is used.
   struct index_node* next; // Pointer to next on list; NULL if last
 } index_node;
 
@@ -48,7 +49,8 @@ typedef struct {
   permissions perms; // Permissions  
   unsigned int size_blocks; // Number of blocks used
   unsigned int size_bytes; // Number of bytes used
-  index_node* inodes; // List of indices of blocks used for this file
+  index_node* inode_head; // List of indices of blocks used for this file; head
+  index_node* inode_tail; // List of indices of blocks used for this file; tail
 } fs_entry;
 
 
@@ -81,5 +83,9 @@ void delete_fs_node(fs_node** nodepp);
 
 // Make a fresh filesystem tree with a single directory.
 fs_node* new_fs_tree();
+
+// Insert an index node into an entry's inode list
+void insert_inode(unsigned int block_index, unsigned int offset,
+  index_node* tail);
 
 #endif // FSTREE_H

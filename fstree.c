@@ -24,7 +24,7 @@ fs_entry* new_fs_entry(char* name, file_type type, user_id user,
   new_entry->type = type;
   new_entry->user = user;
   new_entry->perms= perms;
-  new_entry->inodes = NULL;
+  new_entry->inode_head = new_entry->inode_tail = NULL;
 
   if (type == DIRY) {
     new_entry->size_bytes = 0;
@@ -99,4 +99,17 @@ fs_node* new_fs_tree() {
   );
 
   return new_fs_node(dir_entry, NULL);
+}
+
+void insert_inode(unsigned int block_index, unsigned int offset,
+  index_node* tail) {
+  index_node* new_inode; // New inode
+  
+  // Allocate/initialize new index node
+  new_inode = (index_node*)malloc(sizeof(index_node));
+  new_inode->index = block_index;
+  new_inode->offset = offset;
+  new_inode->next = NULL;
+
+  tail->next = new_inode;
 }
