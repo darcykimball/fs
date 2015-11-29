@@ -3,7 +3,7 @@
 
 #include <string.h>
 
-#define DISK_SIZE 1024
+#define DISK_SIZE 512
 #define BLOCK_SIZE 32
 #define NUM_BLOCKS (DISK_SIZE/BLOCK_SIZE)
 

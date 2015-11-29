@@ -43,7 +43,9 @@ fs_node* new_file(char* name, file_type type, user_id user, permissions perms,
   }
 
   // Calculate offset into the last block
-  last_offset = size_bytes - num_blocks_needed * BLOCK_SIZE;
+  last_offset = size_bytes < BLOCK_SIZE ?
+           size_bytes
+         : size_bytes % BLOCK_SIZE;
   
   // Attempt to allocate/initialize blocks
   for (unsigned int i = 0; i < num_blocks_needed; i++) {
@@ -57,17 +59,18 @@ fs_node* new_file(char* name, file_type type, user_id user, permissions perms,
       return NULL;
     }
 
-    // Write each block with 0xFF (easier to debug) and insert index blocks
+    // Write each block with 0xAA (easier to debug) and insert index blocks
     if (i == num_blocks_needed - 1) {
       // For the last block, write only up to the offset if nonzero
       if (last_offset != 0) {
-        memset(blocks + block_index, 0xFF, last_offset);
+        memset(blocks + block_index, 0xAA, last_offset);
       } else {
-        memset(blocks + block_index, 0xFF, sizeof(block)); 
+        memset(blocks + block_index, 0xAA, sizeof(block)); 
       }
 
       insert_inode(block_index, last_offset, entry->inode_tail);
     } else {
+      memset(blocks + block_index, 0xAA, sizeof(block));
       insert_inode(block_index, 0, entry->inode_tail);
     }
   }

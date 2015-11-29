@@ -46,7 +46,7 @@ void currentd(size_t argc, char** argv) {
 
   (void)argv; // Avoid compiler warning...
 
-  // Sanity heck
+  // Sanity check
   if (curr_dir_node == NULL || curr_dir_node->entry->type != DIRY) {
     fprintf(stderr, "currentd(): NULL or non-directory curr_dir_node!!\n");
     return;
