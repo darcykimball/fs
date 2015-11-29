@@ -9,6 +9,7 @@
 #define NUM_COMMANDS 14
 
 extern fs_node* curr_dir_node; // The current directory
+extern fs_node* root_node; // Root directory
 extern command_pair command_map[NUM_COMMANDS];
 
 // List current directory
