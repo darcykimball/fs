@@ -70,6 +70,7 @@ void chdir(size_t argc, char** argv) {
   }
     
   // Try to find the filepath
+  // TODO
 }
 
 void maked(size_t argc, char** argv) {
@@ -152,7 +153,25 @@ void sizef(size_t argc, char** argv) {
 void movf(size_t argc, char** argv) {
 }
 
-void listfb(size_t argc, char** argv) {}
+void listfb(size_t argc, char** argv) {
+  block* blocks = (block*)disk; // Pointer to disk as blocks
+  int block_index = next_free_block; // Temp for iterating through free blocks
+
+  printf("%d", next_free_block);
+
+  // Check args
+  if (argc > 1) {
+    fprintf(stderr, "listfb(): I take no arguments\n");
+    return;
+  }
+
+  // Go through the free list, printing out the indices of free blocks
+  printf("Free list indices:\n");
+  while (block_index != -1) {
+    printf("%d\n", block_index);
+    block_index = blocks[block_index].next;
+  }
+}
 
 void dumpfs(size_t argc, char** argv) {
   // Dump disk block-by-block
