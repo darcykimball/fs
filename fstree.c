@@ -105,7 +105,7 @@ fs_node* new_fs_tree() {
 }
 
 void insert_inode(unsigned int block_index, unsigned int offset,
-  index_node* tail) {
+  fs_entry* entry) {
   index_node* new_inode; // New inode
   
   // Allocate/initialize new index node
@@ -115,9 +115,9 @@ void insert_inode(unsigned int block_index, unsigned int offset,
   new_inode->next = NULL;
 
   // Check for special case: first insertion, i.e. tail is NULL
-  if (tail == NULL) {
-    tail = new_inode;
+  if (entry->inode_tail == NULL) {
+    entry->inode_head = entry->inode_tail = new_inode;
   } else {
-    tail->next = new_inode;
+    entry->inode_tail->next = new_inode;
   }
 }

@@ -87,7 +87,7 @@ fs_node* new_fs_tree();
 
 // Insert an index node into an entry's inode list
 void insert_inode(unsigned int block_index, unsigned int offset,
-  index_node* tail);
+  fs_entry* entry);
 
 //
 // Debugging/print functions TODO

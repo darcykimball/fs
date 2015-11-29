@@ -68,10 +68,10 @@ fs_node* new_file(char* name, file_type type, user_id user, permissions perms,
         memset(blocks + block_index, 0xAA, sizeof(block)); 
       }
 
-      insert_inode(block_index, last_offset, entry->inode_tail);
+      insert_inode(block_index, last_offset, entry);
     } else {
       memset(blocks + block_index, 0xAA, sizeof(block));
-      insert_inode(block_index, 0, entry->inode_tail);
+      insert_inode(block_index, 0, entry);
     }
   }
 

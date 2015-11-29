@@ -153,6 +153,39 @@ void listd(size_t argc, char** argv) {
 }
 
 void listf(size_t argc, char** argv) {
+  fs_node* file; // File node; temp
+  index_node* inode; // Index node; for iterating through inode lists
+
+  // Check args
+  if (argc < 2) {
+    fprintf(stderr, "listf(): I take at least one argument\n");
+    return;
+  }
+
+  // List each file's index block addresses
+  for (size_t i = 1; i < argc; i++) {
+    // Try to find the file
+    file = find(argv[i]);
+    if (file == NULL) {
+      fprintf(stderr, "listf(): file %s not found\n", argv[i]);
+      continue;
+    }
+
+    // Check if it's a directory
+    if (file->entry->type == DIRY) {
+      fprintf(stderr, "listf(): file %s is a directory\n", argv[i]);
+      continue;
+    }
+
+    printf("Index nodes for %s:\n", argv[i]);
+
+    // Go through its index block list
+    inode = file->entry->inode_head; 
+    while (inode != NULL) {
+      printf("Index = %u, Offset = %u\n", inode->index, inode->offset);
+      inode = inode->next;
+    }
+  }
 }
 
 void sizef(size_t argc, char** argv) {
@@ -231,13 +264,46 @@ static size_t splitpath(char* str, char** tokens, size_t max_tokens) {
 static fs_node* find(char* filepath) {
   char* tokens[MAX_N_TOKENS]; // To hold filename/dirname tokens
   size_t n_tokens; // Number of tokens in the filepath
-  fs_node* curr_node = root_node; // Temp node for traversing
+  fs_node* curr_node; // Temp node for traversing
   int found = 0; // Flag for finding filenames
+  unsigned int num_children; // Number of children in a node
 
   // Split the filepath
   n_tokens = splitpath(filepath, &tokens, MAX_N_TOKENS);
 
-  // Start traversing from the top ("/")
-  // FIXME/TODO
+  // Start traversing from the top ("/"); root if leading slash, current dir
+  // otherwise
+  if (filepath[0] == '/') {
+    // Start at root
+    curr_node = root_node;
+  } else {
+    // Start at current directory
+    curr_node = curr_dir_node;
+  }
+
+  // Look for matching names, token by token, traversing down when a name
+  // matches. If no name is found on a level, the search was unsuccessful
+  for (size_t i = 0; i < n_tokens; i++) {
+    // Check for this token as a name in this node's children
+    found = 0;
+    num_children = curr_node->num_children;
+
+    // XXX: this is inefficient
+    for (unsigned int c = 0; c < num_children; c++) {
+      if (strcmp(curr_node->children[c]->entry->name, tokens[i]) == 0) {
+        // Found match
+        found = 1;
+        curr_node = curr_node->children[c];
+      }
+    }
+
+    // Check that we found a matching name on this level
+    if (!found) {
+      // Something didn't match; exit
+      return NULL;
+    }
+  }
+
+  return curr_node;
 }
 
