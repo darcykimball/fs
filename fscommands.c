@@ -94,7 +94,7 @@ void maked(size_t argc, char** argv) {
   fs_node* dir; // Node to be created for new direcory
 
   // Check args
-  if (argc > 2) {
+  if (argc != 2) {
     fprintf(stderr, "maked(): I take exactly 1 argument\n");
     return;
   }
@@ -159,17 +159,22 @@ void createf(size_t argc, char** argv) {
 }
 
 void extendf(size_t argc, char** argv) {
+  // TODO/FIXME: implement users/permissions!!
+  
 }
 
 void trncf(size_t argc, char** argv) {
+  // TODO/FIXME: implement users/permissions!!
 
 }
 
 void deletefd(size_t argc, char** argv) {
+  // TODO/FIXME: implement users/permissions!!
 }
 
 void listd(size_t argc, char** argv) {
   fs_node* dir; // Dir to list; temp
+  char name[BUFSIZ]; // For saving arguments since find() may mangle it
 
   if (argc == 1) {
     // No args given; list current directory
@@ -183,22 +188,25 @@ void listd(size_t argc, char** argv) {
 
   // List each directory's contents
   for (size_t i = 1; i < argc; i++) {
+    // Save the name
+    strcpy(name, argv[i]);
+
     // Find the directory
     dir = find(argv[i]);
 
     if (dir == NULL) {
-      fprintf(stderr, "listf(): %s not found\n", argv[i]);
+      fprintf(stderr, "listf(): %s not found\n", name);
       continue;
     }
 
     // Check that it's a directory
     if (dir->entry->type != DIRY) {
-      fprintf(stderr, "listf(): %s is not a directory\n", argv[1]);
+      fprintf(stderr, "listf(): %s is not a directory\n", name);
       continue;
     }
 
     // Go through each of the directory's contents and print their names
-    printf("%s:\n", argv[i]);
+    printf("%s:\n", name);
     for (unsigned int c = 0; c < dir->num_children; c++) {
       printf("\t%s\n", dir->children[c]->entry->name);
     }
@@ -242,9 +250,53 @@ void listf(size_t argc, char** argv) {
 }
 
 void sizef(size_t argc, char** argv) {
+
 }
 
 void movf(size_t argc, char** argv) {
+  fs_node* file; // File or directory to move
+  fs_node* dir; // Destination directory
+
+  // Check args
+  if (argc != 3) {
+    fprintf(stderr, "movf(): I take exactly 2 arguments\n");
+    return;
+  }
+
+  // Find the files/directory
+  file = find(argv[1]); 
+  if (file == NULL) {
+    fprintf(stderr, "movf(): file or directory %s not found\n", argv[1]);
+    return;
+  }
+
+  dir = find(argv[2]); 
+  if (dir == NULL) {
+    fprintf(stderr, "movf(): directory %s not found\n", argv[2]);
+    return;
+  }
+
+  // Check that the 2nd argument is a directory
+  if (dir->entry->type != DIRY) {
+    fprintf(stderr, "movf(): %s is not a directory\n", argv[2]);
+    return;
+  }
+
+  // Check that the two arguments are distinct
+  if (file == dir) {
+    fprintf(stderr, "movf(): cannot move directory to itself\n");
+    return;
+  }
+
+  // Remove file/directory from its current directory
+  unlink_child(file);
+  
+  // Put it in the new directory
+  file->parent = dir;
+  if (insert_child(file, dir) != 0) {
+    fprintf(stderr, "movf(): couldn't add to directory!\n");
+    return;
+  }
 }
 
 void listfb(size_t argc, char** argv) {
@@ -268,6 +320,12 @@ void listfb(size_t argc, char** argv) {
 }
 
 void dumpfs(size_t argc, char** argv) {
+  // Check args
+  if (argc > 1) {
+    fprintf(stderr, "dumpfs(): I take no arguments\n");
+    return;
+  }
+
   // Dump disk block-by-block
   for (unsigned int i = 0; i < NUM_BLOCKS; i++) {
     dump_block(i);
@@ -275,6 +333,12 @@ void dumpfs(size_t argc, char** argv) {
 }
 
 void formatd(size_t argc, char** argv) {
+  // Check args
+  if (argc > 1) {
+    fprintf(stderr, "formatd(): I take no arguments\n");
+    return;
+  }
+
   printf("Deleting filesystem tree...\n");
   delete_fs_node(&root_node);
 
