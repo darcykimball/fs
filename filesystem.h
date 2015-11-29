@@ -1,39 +1,47 @@
 #ifndef FILESYSTEM_H
 #define FILESYSTEM_H
 
+#include <string.h>
+
 #define DISK_SIZE 1024
-#define FILE_NM_LEN 128
+#define BLOCK_SIZE 64
+
+const unsigned int NUM_BLOCKS = DISK_SIZE/BLOCK_SIZE;
 
 // Stores the file/directory metadata; doesn't actually 'reside on disk' 
 typedef struct {
   // TODO:  
 } fs_directory;
 
-// File types
-typedef enum {
-  TXT, // Plaintext
-  EXE, // Binary executable
-  IMG, // Image
-  DOC, // Formatted document
-  MOV  // Video
-} file_type;
-
-// User IDs
-typedef unsigned long user_id;
-
-// Permissions
+// An empty block; used to maintain free list of blocks
 typedef struct {
-  unsigned char read: 1; // 1 if has read permission
-  unsigned char write: 1; // 1 if has write permission
-} permissions;
+  int next; // Index of next block on free list; -1 if none
+  unsigned char unused[BLOCK_SIZE - sizeof(int)]; // Padding
+} block;
 
-typedef struct {
-  char name[FILE_NM_LEN]; // Name of the file
-  file_type type; // File type
-  user_id user; // User ID of owner 
-  permissions perms; // Permissions  
-} file_entry;
+extern unsigned char disk[DISK_SIZE]; // The 'disk drive'
 
-extern unsigned char disk; // The 'disk drive'
+//
+// Initialization functions
+//
+
+// Initialize blocks on disk, i.e. the free list
+void init_disk_blocks() {
+  block* curr = (block*)disk; // Current block being initialized
+
+  // Set each block to point to the next
+  for (unsigned int i = 0; i < NUM_BLOCKS - 1; i++) {
+    // Set to point to immediate successor
+    curr->next = i + 1; 
+    
+    // Initialize rest of block to zero (for debugging; easier to see)
+    memset(curr, 0, sizeof(block));
+
+    curr++;
+  }
+
+  // Set last block to point to 'null'
+  curr->next = -1;
+}
 
 #endif // FILESYSTEM_H
