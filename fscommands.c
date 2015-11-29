@@ -57,6 +57,8 @@ void currentd(size_t argc, char** argv) {
 }
 
 void chdir(size_t argc, char** argv) {
+  fs_node* dir; // Directory to change to
+
   // Check args
   if (argc > 2) {
     fprintf(stderr, "chdir(): I take 1 or 0 arguments\n");
@@ -70,7 +72,21 @@ void chdir(size_t argc, char** argv) {
   }
     
   // Try to find the filepath
-  // TODO
+  dir = find(argv[1]); 
+
+  if (dir == NULL) {
+    fprintf(stderr, "chdir(): directory %s not found\n", argv[1]);
+    return;
+  }
+
+  // Check if it really is a directory
+  if (dir->entry->type != DIRY) {
+    fprintf(stderr, "chdir(): %s is not a directory\n", argv[1]);
+    return;
+  }
+
+  // Change to the directory
+  curr_dir_node = dir;
 }
 
 void maked(size_t argc, char** argv) {
@@ -82,6 +98,8 @@ void maked(size_t argc, char** argv) {
     return;
   }
   
+  // Allocate new directory entry; put it under current directory
+  // FIXME: implement permissions!?
   dir = new_dir(argv[1], curr_user, RDWR, curr_dir_node);
 }
 
