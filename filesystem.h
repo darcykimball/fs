@@ -6,6 +6,10 @@
 #define DISK_SIZE 1024
 #define BLOCK_SIZE 64
 
+//
+// This file has to do with mostly 'hardware', lower-level details.
+//
+
 const unsigned int NUM_BLOCKS = DISK_SIZE/BLOCK_SIZE;
 
 // Stores the file/directory metadata; doesn't actually 'reside on disk' 
@@ -20,9 +24,10 @@ typedef struct {
 } block;
 
 extern unsigned char disk[DISK_SIZE]; // The 'disk drive'
+extern unsigned int next_free_block; // Index of the next free block
 
 //
-// Initialization functions
+// Functions
 //
 
 // Initialize blocks on disk, i.e. the free list
@@ -43,5 +48,11 @@ void init_disk_blocks() {
   // Set last block to point to 'null'
   curr->next = -1;
 }
+
+// Request a block. Returns the index of the block or -1 if no space is left.
+unsigned int get_block();
+
+// Free a block.
+void free_block();
 
 #endif // FILESYSTEM_H
