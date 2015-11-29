@@ -13,6 +13,14 @@ extern fs_node* curr_dir_node; // The current directory
 extern fs_node* root_node; // Root directory
 extern command_pair command_map[NUM_COMMANDS];
 
+//
+// XXX: The filepaths these functions are expecting are interpreted as follows:
+//   -If it begins with '/', it is considered an absolute path starting at the
+//    root directory
+//   -Otherwise, the current directory is prepended to the string to form
+//    the full path
+//
+
 // List current directory
 void currentd(size_t argc, char** argv);
 

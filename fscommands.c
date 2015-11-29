@@ -229,14 +229,7 @@ static fs_node* find(char* filepath) {
   // Split the filepath
   n_tokens = splitpath(filepath, &tokens, MAX_N_TOKENS);
 
-  // Start traversing from the top
-  if (strcmp(tokens[0], root_node->entry->name) != 0) {
-    fprintf(stderr, "find(): all absolute paths must begin at %s\n",
-      root_node->entry->name);
-    return NULL;
-  }
-
+  // Start traversing from the top ("/")
   // FIXME/TODO
-  
 }
 
