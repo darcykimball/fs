@@ -8,6 +8,7 @@
 
 #define NUM_COMMANDS 14
 
+extern user_id curr_user; // Current user
 extern fs_node* curr_dir_node; // The current directory
 extern fs_node* root_node; // Root directory
 extern command_pair command_map[NUM_COMMANDS];
@@ -15,6 +16,7 @@ extern command_pair command_map[NUM_COMMANDS];
 // List current directory
 void currentd(size_t argc, char** argv);
 
+// Change to a given directory; if no args given, go to root directory
 void chdir(size_t argc, char** argv);
 
 void maked(size_t argc, char** argv);

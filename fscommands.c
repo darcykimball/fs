@@ -1,10 +1,23 @@
 #include <stddef.h>
+#include <stdlib.h>
 #include "fscommands.h"
 #include "filesystem.h"
+#include "fsfile.h"
+
+#define MAX_N_TOKENS 100 // Maximum filepath tokens
 
 // FIXME
 fs_node* curr_dir_node = NULL;
 fs_node* root_node = NULL;
+user_id curr_user = 0; // FIXME!!
+
+// Split input string on slashes, setting 'tokens' to contain the array
+// of token strings. Returns the number of tokens.
+static size_t splitpath(char* str, char** tokens, size_t max_tokens);
+
+// Helper function; find the file/directory with the given path. Returns NULL
+// if not found
+static fs_node* find(char* filepath);
 
 command_pair command_map[] = {
   { "currentd", currentd },
@@ -27,7 +40,7 @@ command_pair command_map[] = {
 void currentd(size_t argc, char** argv) {
   // Check for valid args
   if (argc > 1) {
-    fprintf(stderr, "currentd takes no arguments\n");
+    fprintf(stderr, "currentd(): I take no arguments\n");
     return;
   } 
 
@@ -41,16 +54,80 @@ void currentd(size_t argc, char** argv) {
 
   // Print out the name
   printf("%s\n", curr_dir_node->entry->name);
-
 }
 
 void chdir(size_t argc, char** argv) {
+  // Check args
+  if (argc > 2) {
+    fprintf(stderr, "chdir(): I take 1 or 0 arguments\n");
+    return;
+  }
+
+  if (argc == 1) {
+    // No args given; change to root directory
+    curr_dir_node = root_node;
+    return;
+  }
+    
+  // Try to find the filepath
 }
 
 void maked(size_t argc, char** argv) {
 }
 
 void createf(size_t argc, char** argv) {
+  fs_node* file; // Node to be created for new file
+  unsigned int size_bytes; // Size in bytes of the new file
+  char* end; // For use with strtol()
+  file_type type; // File type
+  permissions perms = { 1, 1 };
+
+  // Check args
+  if (argc != 4) {
+    fprintf(stderr, "createf(): Usage: createf filename file_type file_size\n");
+    fprintf(stderr, " Usage: file_type can be [t]xt, [e]xe, [i]mg, [d]oc, or [m]ov\n");
+    return;
+  }
+  
+  size_bytes = (unsigned int)strtol(argv[3], &end, 10);
+  if (*end != '\0') {
+    fprintf(stderr, "createf(): file_size is not an integer\n");
+    return;
+  }
+
+  if (size_bytes == 0) {
+    fprintf(stderr, "createf(): file_size must be > 0\n");
+    return;
+  }
+
+  // Check first char of file_type arg
+  switch (argv[2][0]) {
+    case 't':
+      type = TXT;   
+      break;
+    case 'e':
+      type = EXE;   
+      break;
+    case 'i':
+      type = IMG;   
+      break;
+    case 'd':
+      type = DOC;   
+      break;
+    case 'm':
+      type = MOV;   
+      break;
+    default:
+      type = TXT;
+      break;
+  }
+
+  printf("Creating new file with name %s, type %d, and size %u\n",
+    argv[1], type, size_bytes);
+  
+  file = new_file(argv[1], type, curr_user, perms, size_bytes, curr_dir_node);
+
+  // TODO/FIXME: implement users/permissions!!
 }
 
 void extendf(size_t argc, char** argv) {
@@ -94,3 +171,53 @@ void formatd(size_t argc, char** argv) {
   printf("Formatting disk...\n");
   init_disk();
 }
+
+// Split input string on slashes, setting 'tokens' to contain the array
+// of token strings. Returns the number of tokens.
+static size_t splitpath(char* str, char** tokens, size_t max_tokens) {
+  char* token; // Token returned by strtok() 
+  size_t token_count = 0; // Number of tokens consumed so far
+  char* strarg = str; // Argument to strtok() must be 'str' on first call,
+                      // NULL after
+
+  // Consume as many tokens as possible
+  while ((token = strtok(strarg, "/")) != NULL) {
+    // Setup argument for subsequent calls
+    if (token_count == 0) {
+      strarg = NULL;
+    }
+
+    // Check for space
+    if (token_count < max_tokens) {
+      tokens[token_count] = token;
+    } else {
+      // No space left
+      break;
+    }
+
+    token_count++;
+  }
+
+  return token_count;
+}
+
+static fs_node* find(char* filepath) {
+  char* tokens[MAX_N_TOKENS]; // To hold filename/dirname tokens
+  size_t n_tokens; // Number of tokens in the filepath
+  fs_node* curr_node = root_node; // Temp node for traversing
+  int found = 0; // Flag for finding filenames
+
+  // Split the filepath
+  n_tokens = splitpath(filepath, &tokens, MAX_N_TOKENS);
+
+  // Start traversing from the top
+  if (strcmp(tokens[0], root_node->entry->name) != 0) {
+    fprintf(stderr, "find(): all absolute paths must begin at %s\n",
+      root_node->entry->name);
+    return NULL;
+  }
+
+  // FIXME/TODO
+  
+}
+
