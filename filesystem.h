@@ -4,8 +4,10 @@
 #include <string.h>
 
 #define DISK_SIZE 1024
-#define BLOCK_SIZE 64
+#define BLOCK_SIZE 32
 #define NUM_BLOCKS (DISK_SIZE/BLOCK_SIZE)
+
+extern int debug; // Debug message flag
 
 //
 // This file has to do with mostly 'hardware', lower-level details.
@@ -41,5 +43,8 @@ int get_block();
 
 // Free a block.
 void free_block(unsigned int block_index);
+
+// Print out the contents of a block
+void dump_block(unsigned int block_index);
 
 #endif // FILESYSTEM_H

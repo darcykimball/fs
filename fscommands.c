@@ -76,10 +76,21 @@ void movf(size_t argc, char** argv) {
 }
 
 void listfb(size_t argc, char** argv) {}
-void dumpfs(size_t argc, char** argv) {}
+
+void dumpfs(size_t argc, char** argv) {
+  // Dump disk block-by-block
+  for (unsigned int i = 0; i < NUM_BLOCKS; i++) {
+    dump_block(i);
+  }
+}
 
 void formatd(size_t argc, char** argv) {
+  printf("Deleting filesystem tree...\n");
   delete_fs_node(&root_node);
+
+  printf("Making new filesystem tree...\n");
   root_node = new_fs_tree();
+
+  printf("Formatting disk...\n");
   init_disk();
 }

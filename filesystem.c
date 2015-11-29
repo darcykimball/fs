@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "filesystem.h"
 
+int debug = 0; // Debug message flag
 unsigned char disk[DISK_SIZE]; // The 'hard disk'
 unsigned int next_free_block = 0; // Index of next free block
 
@@ -15,13 +16,17 @@ void init_disk() {
 void init_disk_blocks() {
   block* curr = (block*)disk; // Current block being initialized
 
+  if (debug) {
+    fprintf(stderr, "init_disk_blocks(): Initializing disk blocks...\n");
+  }
+
   // Set each block to point to the next
   for (unsigned int i = 0; i < NUM_BLOCKS - 1; i++) {
-    // Set to point to immediate successor
-    curr->next = i + 1;
-
     // Initialize rest of block to zero (for debugging; easier to see)
     memset(curr, 0, sizeof(block));
+    
+    // Set to point to immediate successor
+    curr->next = i + 1;
 
     curr++;
   }
@@ -59,4 +64,20 @@ void free_block(unsigned int block_index) {
   // Add the block back to the free list, at the head
   blocks[block_index].next = next_free_block;
   next_free_block = block_index;
+}
+
+void dump_block(unsigned int block_index) {
+  block* blocks = (block*)disk; // Pointer to disk as blocks
+  unsigned char* block_bytes = (unsigned char*)(blocks + block_index);
+  
+  printf("Block %u:\n", block_index);
+
+  // Print out a word at a time
+  // XXX: this only works if BLOCK_SIZE is a multiple of a word, in bytes!!
+  for (unsigned int i = 0; i < BLOCK_SIZE/sizeof(int); i++) {
+    for (unsigned int j = 0; j < sizeof(int); j++) {
+      printf("%02X", block_bytes[i*sizeof(int) + j]);
+    }
+    printf("\n");
+  }
 }

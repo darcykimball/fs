@@ -3,6 +3,9 @@
 #include "shell.h"
 
 int main() {
+  // Set debug on
+  debug = 1;
+
   // Initialize disk and filesystem tree
   init_disk();
   
