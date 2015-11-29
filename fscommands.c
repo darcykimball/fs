@@ -1,9 +1,10 @@
 #include <stddef.h>
 #include "fscommands.h"
+#include "filesystem.h"
 
 // FIXME
 fs_node* curr_dir_node = NULL;
-fs_node* root = NULL;
+fs_node* root_node = NULL;
 
 command_pair command_map[] = {
   { "currentd", currentd },
@@ -78,7 +79,7 @@ void listfb(size_t argc, char** argv) {}
 void dumpfs(size_t argc, char** argv) {}
 
 void formatd(size_t argc, char** argv) {
-  delete_fs_node(root_node);
-  root = new_fs_tree();
+  delete_fs_node(&root_node);
+  root_node = new_fs_tree();
   init_disk();
 }
