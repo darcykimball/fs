@@ -169,6 +169,40 @@ void deletefd(size_t argc, char** argv) {
 }
 
 void listd(size_t argc, char** argv) {
+  fs_node* dir; // Dir to list; temp
+
+  if (argc == 1) {
+    // No args given; list current directory
+    dir = curr_dir_node;
+    for (unsigned int c = 0; c < dir->num_children; c++) {
+      printf("%s\n", dir->children[c]->entry->name);
+    }
+
+    return;
+  }
+
+  // List each directory's contents
+  for (size_t i = 1; i < argc; i++) {
+    // Find the directory
+    dir = find(argv[i]);
+
+    if (dir == NULL) {
+      fprintf(stderr, "listf(): %s not found\n", argv[i]);
+      continue;
+    }
+
+    // Check that it's a directory
+    if (dir->entry->type != DIRY) {
+      fprintf(stderr, "listf(): %s is not a directory\n", argv[1]);
+      continue;
+    }
+
+    // Go through each of the directory's contents and print their names
+    printf("%s:\n", argv[i]);
+    for (unsigned int c = 0; c < dir->num_children; c++) {
+      printf("\t%s\n", dir->children[c]->entry->name);
+    }
+  }
 }
 
 void listf(size_t argc, char** argv) {
