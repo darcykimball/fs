@@ -6,6 +6,8 @@
 
 #define MAX_N_TOKENS 100
 
+int echo = 0; // Echo off
+
 static char const PROMPT_STR[] = ">>";
 
 static size_t tokenize(char* str, char** tokens, size_t max_tokens);
@@ -36,6 +38,15 @@ void loop(command_pair* command_map, size_t n_commands) {
     // Special case: user's spamming enter key
     if (n_tokens == 0) {
       continue;
+    }
+
+    // Echo if on
+    if (echo) {
+      printf("Your command was:\n");
+      for (size_t i = 0; i < n_tokens; i++) {
+        printf("%s ", tokens[i]);
+      }
+      printf("\n");
     }
 
     // Lookup the command

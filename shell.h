@@ -5,6 +5,8 @@
 
 #define MAX_CMD_LEN 12
 
+extern int echo; // Flag for echoing commands entered
+
 typedef void (*command_fn)(size_t argc, char** argv);
 
 typedef struct {

@@ -12,6 +12,9 @@ int main() {
 
   printf("You start as user: %d\n", curr_user);
 
+  // Turn on echoing commands
+  echo = 1;
+
   loop(command_map, NUM_COMMANDS);
 
   // Cleanup
