@@ -449,7 +449,7 @@ void listf(size_t argc, char** argv) {
     // Go through its index block list
     inode = file->entry->inode_head; 
     while (inode != NULL) {
-      printf("Index = %u, Offset = %u, Address (on disk) = %u\n", inode->index,
+      printf("Index = %u, Offset = %u, Address (on disk) = %lu\n", inode->index,
         inode->offset, inode->index * sizeof(block));
       inode = inode->next;
     }
@@ -535,6 +535,8 @@ void movf(size_t argc, char** argv) {
 }
 
 void listfb(size_t argc, char** argv) {
+  (void) argv;
+
   block* blocks = (block*)disk; // Pointer to disk as blocks
   int block_index = next_free_block; // Temp for iterating through free blocks
 
@@ -555,6 +557,8 @@ void listfb(size_t argc, char** argv) {
 }
 
 void dumpfs(size_t argc, char** argv) {
+  (void) argv;
+
   // Check args
   if (argc > 1) {
     fprintf(stderr, "dumpfs(): I take no arguments\n");
@@ -568,6 +572,8 @@ void dumpfs(size_t argc, char** argv) {
 }
 
 void formatd(size_t argc, char** argv) {
+  (void) argv;
+
   // Check args
   if (argc > 1) {
     fprintf(stderr, "formatd(): I take no arguments\n");
