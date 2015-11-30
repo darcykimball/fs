@@ -122,12 +122,16 @@ void delete_file(fs_node* file_node) {
 // XXX: deleting root leads to undefined behavior!!
 void delete_dir(fs_node* dir_node) {
   fs_node* node; // Temp node for traversing; for readability
+  unsigned int num_children; // To save num_children field; delete_file()
+                             // will clobber the field otherwise
+  // XXX: side effects are evil, and when self-imposed, just dumb
 
   // Unlink from parent
   unlink_child(dir_node);
 
   // Delete each child
-  for (unsigned int c = 0; c < dir_node->num_children; c++) {
+  num_children = dir_node->num_children;
+  for (unsigned int c = 0; c < num_children; c++) {
     node = dir_node->children[c];
     
     // Check if directory
