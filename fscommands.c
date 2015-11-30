@@ -430,28 +430,13 @@ void deletefd(size_t argc, char** argv) {
 void listd(size_t argc, char** argv) {
   fs_node* dir; // Dir to list; temp
   char name[BUFSIZ]; // For saving arguments since find() may mangle it
-  char* perms; // Permissions string; for printing out
 
   if (argc == 1) {
     // No args given; list current directory
     dir = curr_dir_node;
 
     for (unsigned int c = 0; c < dir->num_children; c++) {
-      // Get the permissions string
-      switch (dir->children[c]->entry->perms) {
-        case READ:
-          perms = "READ";
-          break;
-        case RDWR:
-          perms = "RDWR";
-          break;
-        default:
-          perms = "SYML";
-      }
-
-      printf("%s %s %u %u\n", dir->children[c]->entry->name,
-        perms, dir->children[c]->entry->user,
-        dir->children[c]->entry->size_bytes);
+      dump_properties(dir->children[c]->entry);
     }
 
     return;
@@ -480,21 +465,8 @@ void listd(size_t argc, char** argv) {
     // and properties
     printf("%s:\n", name);
     for (unsigned int c = 0; c < dir->num_children; c++) {
-      // Get the permissions string
-      switch (dir->children[c]->entry->perms) {
-        case READ:
-          perms = "READ";
-          break;
-        case RDWR:
-          perms = "RDWR";
-          break;
-        default:
-          perms = "SYML";
-      }
-
-      printf("    %s %s %u %u\n", dir->children[c]->entry->name,
-        perms, dir->children[c]->entry->user,
-        dir->children[c]->entry->size_bytes);
+      printf("    ");
+      dump_properties(dir->children[c]->entry);
     }
   }
 }

@@ -219,3 +219,43 @@ void dump_path(fs_node* node) {
   printf("%s", node->entry->name);
 }
 
+void dump_properties(fs_entry* entry) {
+  char* perms; // Permissions string for the entry
+  char* type; // Filetype string for the entry
+
+  // Get the permissions string
+  switch (entry->perms) {
+    case READ:
+      perms = "read";
+      break;
+    case RDWR:
+      perms = "rdwr";
+      break;
+    default:
+      perms = "syml";
+  }
+
+  // Get the filetype string
+  switch (entry->type) {
+    case TXT:
+      type = "txt";
+      break;
+    case EXE:
+      type = "exe";
+      break;
+    case IMG:
+      type = "img";
+      break;
+    case DOC:
+      type = "doc";
+      break;
+    case MOV:
+      type = "mov";
+      break;
+    default:
+      type = "dir";
+  }
+
+  printf("%10s%6s%5s%8u%8u\n", entry->name, perms, type, entry->user,
+    entry->size_bytes);
+}

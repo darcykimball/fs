@@ -109,4 +109,7 @@ void delete_inode_list(fs_entry* entry);
 // Print out the full path ending at the given node
 void dump_path(fs_node* node);
 
+// Print out the properties of an entry
+void dump_properties(fs_entry* entry);
+
 #endif // FSTREE_H
