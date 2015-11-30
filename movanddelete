@@ -1,0 +1,33 @@
+createf foo txt 100
+createf bar img 33
+createf baz doc 99
+dumpfs
+
+listd
+
+maked grok
+maked uber
+listd grok
+listd uber
+listd
+
+movf foo grok
+movf bar grok
+listd /grok
+listd /
+
+movf grok uber
+listd /
+listd /uber
+listd /uber/grok
+
+listf baz
+deletefd baz
+listd
+dumpfs
+
+deletefd uber
+listd
+dumpfs
+
+listfb

@@ -1,0 +1,14 @@
+createf foo txt 100
+createf bar img 33
+createf baz doc 99
+maked grok
+maked uber
+movf foo grok
+movf bar grok
+movf grok uber
+dumpfs
+
+formatd
+listd
+listfb
+dumpfs

@@ -1,0 +1,16 @@
+createf file txt 100
+maked dir
+maked dir2
+
+chmod file r
+extendf file 10
+trncf file 93
+
+chmod dir r
+chdir dir
+currentd
+createf file txt 9
+
+chdir
+movf dir dir2
+movf dir2 dir

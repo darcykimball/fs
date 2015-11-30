@@ -1,0 +1,17 @@
+createf movie mov 10
+listf movie
+sizef movie
+listfb
+dumpfs
+
+extendf movie 100
+listf movie
+sizef movie
+listfb
+dumpfs
+
+trncf movie 109
+listf movie
+sizef movie
+listfb
+dumpfs
