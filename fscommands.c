@@ -550,8 +550,6 @@ void listfb(size_t argc, char** argv) {
   block* blocks = (block*)disk; // Pointer to disk as blocks
   int block_index = next_free_block; // Temp for iterating through free blocks
 
-  printf("%d", next_free_block);
-
   // Check args
   if (argc > 1) {
     fprintf(stderr, "listfb(): I take no arguments\n");
