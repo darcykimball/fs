@@ -170,9 +170,6 @@ void createf(size_t argc, char** argv) {
       break;
   }
 
-  printf("Creating new file with name %s, type %d, and size %u\n",
-    argv[1], type, size_bytes);
-  
   file = new_file(argv[1], type, curr_user, RDWR, size_bytes, curr_dir_node);
 
   if (file == NULL) {
