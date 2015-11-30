@@ -102,6 +102,11 @@ void maked(size_t argc, char** argv) {
   // Allocate new directory entry; put it under current directory
   // FIXME: implement permissions!?
   dir = new_dir(argv[1], curr_user, RDWR, curr_dir_node);
+
+  if (dir == NULL) {
+    fprintf(stderr, "maked(): could not make directory\n");
+    return;
+  }
 }
 
 void createf(size_t argc, char** argv) {
@@ -154,6 +159,11 @@ void createf(size_t argc, char** argv) {
     argv[1], type, size_bytes);
   
   file = new_file(argv[1], type, curr_user, RDWR, size_bytes, curr_dir_node);
+
+  if (file == NULL) {
+    fprintf(stderr, "createf(): could not create file\n");
+    return;
+  }
 
   // TODO/FIXME: implement users/permissions!!
 }

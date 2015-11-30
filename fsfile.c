@@ -20,7 +20,6 @@ fs_node* new_file(char* name, file_type type, user_id user, permissions perms,
     return NULL;
   }
 
-
   // Check for duplicate named file in current directory
   for (unsigned int i = 0; i < curr_dir_node->num_children; i++) {
     if (strcmp(name, curr_dir_node->children[i]->entry->name) == 0) {
@@ -28,6 +27,7 @@ fs_node* new_file(char* name, file_type type, user_id user, permissions perms,
       return NULL;
     }
   }
+
   node = new_fs_node(entry, curr_dir_node);
 
   // Sanity check
