@@ -6,7 +6,7 @@
 #include "fstree.h"
 #include "shell.h"
 
-#define NUM_COMMANDS 14
+#define NUM_COMMANDS 16
 
 extern user_id curr_user; // Current user
 extern fs_node* curr_dir_node; // The current directory
@@ -50,5 +50,11 @@ void listfb(size_t argc, char** argv);
 void dumpfs(size_t argc, char** argv);
 
 void formatd(size_t argc, char** argv);
+
+// Change permissions for a file or directory. Not recursive
+void chmod(size_t argc, char** argv);
+
+// Switch user; if no arguments given, switch to root
+void su(size_t argc, char** argv);
 
 #endif // FSCOMMANDS_H

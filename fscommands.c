@@ -19,6 +19,7 @@ static size_t splitpath(char* str, char* tokens[], size_t max_tokens);
 // if not found
 static fs_node* find(char* filepath);
 
+// Map of command names to the function to invoke
 command_pair command_map[] = {
   { "currentd", currentd },
   { "chdir", chdir },
@@ -33,7 +34,9 @@ command_pair command_map[] = {
   { "movf", movf },
   { "listfb", listfb },
   { "dumpfs", dumpfs },
-  { "formatd", formatd }
+  { "formatd", formatd },
+  { "chmod", chmod },
+  { "su", su }
 };
 
 // List current directory
@@ -98,6 +101,13 @@ void maked(size_t argc, char** argv) {
     fprintf(stderr, "maked(): I take exactly 1 argument\n");
     return;
   }
+
+  // Check permissions
+  if (curr_dir_node->entry->perms != RDWR) {
+    // Don't have permission
+    fprintf(stderr, "maked(): you (user %u) don't have permission\n", curr_user);
+    return;
+  }
   
   // Allocate new directory entry; put it under current directory
   // FIXME: implement permissions!?
@@ -119,6 +129,13 @@ void createf(size_t argc, char** argv) {
   if (argc != 4) {
     fprintf(stderr, "createf(): Usage: createf filename file_type file_size\n");
     fprintf(stderr, " Usage: file_type can be [t]xt, [e]xe, [i]mg, [d]oc, or [m]ov\n");
+    return;
+  }
+  
+  // Check permissions
+  if (curr_dir_node->entry->perms != RDWR) {
+    // Don't have permission
+    fprintf(stderr, "createf(): you (user %u) don't have permission\n", curr_user);
     return;
   }
   
@@ -200,6 +217,13 @@ void extendf(size_t argc, char** argv) {
   file = find(argv[1]);
   if (file == NULL) {
     fprintf(stderr, "extendf(): file %s not found\n", name);
+    return;
+  }
+
+  // Check permissions
+  if (file->entry->perms != RDWR) {
+    // Don't have permission
+    fprintf(stderr, "extendf(): you (user %u) don't have permission\n", curr_user);
     return;
   }
 
@@ -299,6 +323,13 @@ void trncf(size_t argc, char** argv) {
     return;
   }
 
+  // Check permissions
+  if (file->entry->perms != RDWR) {
+    // Don't have permission
+    fprintf(stderr, "trncf(): you (user %u) don't have permission\n", curr_user);
+    return;
+  }
+
   // Check that it's a regular file
   if (file->entry->type == DIRY) {
     fprintf(stderr, "trncf(): %s is not a regular file\n", name);
@@ -376,6 +407,13 @@ void deletefd(size_t argc, char** argv) {
     if (file == NULL) {
       fprintf(stderr, "deletefd(): file or directory %s not found\n", name);
       continue;
+    }
+
+    // Check permissions
+    if (file->entry->perms != RDWR) {
+      // Don't have permission
+      fprintf(stderr, "deletefd(): you (user %u) don't have permission\n", curr_user);
+      return;
     }
 
     // Check if it's a directory
@@ -522,9 +560,23 @@ void movf(size_t argc, char** argv) {
     return;
   }
 
+  // Check permissions
+  if (file->entry->perms != RDWR) {
+    // Don't have permission
+    fprintf(stderr, "movf(): you (user %u) don't have permission\n", curr_user);
+    return;
+  }
+
   dir = find(argv[2]); 
   if (dir == NULL) {
     fprintf(stderr, "movf(): directory %s not found\n", argv[2]);
+    return;
+  }
+
+  // Check permissions
+  if (dir->entry->perms != RDWR) {
+    // Don't have permission
+    fprintf(stderr, "movf(): you (user %u) don't have permission\n", curr_user);
     return;
   }
 
@@ -603,6 +655,71 @@ void formatd(size_t argc, char** argv) {
 
   printf("Formatting disk...\n");
   init_disk();
+}
+
+void chmod(size_t argc, char** argv) {
+  char name[BUFSIZ]; // For saving argument since find() may mangle it
+  fs_node* file; // File or directory to change permissions on
+  permissions new_perms; // New permissions to set
+
+  // Check args
+  if (argc != 3) {
+    fprintf(stderr, "chmod(): Usage: chmod file [r|w]\n");
+    return;
+  }
+
+  switch(argv[2][0]) {
+    case 'r':
+      new_perms = READ;
+      break;
+    case 'w':
+      new_perms = RDWR;
+      break;
+    default:
+      fprintf(stderr, "chmod(): new permissions must be [r]ead-only or read-[w]rite\n"); 
+      return;
+  }
+
+  // Save name
+  strcpy(name, argv[1]);
+   
+  // Find the file or directory
+  file = find(argv[1]); 
+  if (file == NULL) {
+    fprintf(stderr, "chmod(): file or directory %s not found\n", name);
+  }
+
+  // Change the permissions
+  file->entry->perms = new_perms;
+}
+
+void su(size_t argc, char** argv) {
+  user_id new_id; // User id to switch to
+  char* end; // For use with strtol()
+
+  // Check args
+  if (argc > 2) {
+    fprintf(stderr, "su(): I take 1 or 0 arguments\n");
+    return;
+  }
+
+  if (argc == 1) {
+    // No args given; switch to root
+    curr_user = ROOT_USER_ID;
+    printf("Changed to user: root\n");
+    return;
+  }
+
+  // Parse user id
+  new_id = (user_id)strtol(argv[1], &end, 10);
+  if (*end != '\0') {
+    fprintf(stderr, "su(): user id must be a integer\n");
+    return;
+  }
+
+  // Switch to the new user
+  curr_user = new_id;
+  printf("Changed to user: %u\n", curr_user);
 }
 
 // Split input string on slashes, setting 'tokens' to contain the array

@@ -11,6 +11,9 @@ int main() {
   
   root_node = new_fs_tree();
   curr_dir_node = root_node;
+  curr_user = 1;
+
+  printf("You start as user: %d\n", curr_user);
 
   loop(command_map, NUM_COMMANDS);
 
