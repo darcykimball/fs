@@ -4,6 +4,7 @@
 int debug = 0; // Debug message flag
 unsigned char disk[DISK_SIZE]; // The 'hard disk'
 int next_free_block = 0; // Index of next free block
+unsigned int num_free_blocks = NUM_BLOCKS; // Number of free blocks
 
 void init_disk() {
   printf("init_disk(): Initializing disk...\n");
@@ -11,6 +12,7 @@ void init_disk() {
   // Wipe the disk and setup free list
   init_disk_blocks();
   next_free_block = 0;
+  num_free_blocks = NUM_BLOCKS;
 }
 
 void init_disk_blocks() {
@@ -48,7 +50,9 @@ int get_block() {
     return -1;
   }
 
+  // Update global trackers
   free_index = next_free_block;
+  num_free_blocks--;
 
   // Check if this was the last block
   if (blocks[next_free_block].next == -1) {
@@ -70,7 +74,10 @@ void free_block(unsigned int block_index) {
 
   // Add the block back to the free list, at the head
   blocks[block_index].next = next_free_block;
+
+  // Update global trackers
   next_free_block = block_index;
+  num_free_blocks++;
 }
 
 void dump_block(unsigned int block_index) {

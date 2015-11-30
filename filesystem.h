@@ -7,11 +7,16 @@
 #define BLOCK_SIZE 32
 #define NUM_BLOCKS (DISK_SIZE/BLOCK_SIZE)
 
-extern int debug; // Debug message flag
-
 //
 // This file has to do with mostly 'hardware', lower-level details.
 //
+
+extern int debug; // Debug message flag FIXME: remove!!
+
+// XXX: This is a hack(?). I'm guessing real hardware can't keep track of
+// the amount of free space so directly?
+extern unsigned int num_free_blocks;
+
 
 // Stores the file/directory metadata; doesn't actually 'reside on disk' 
 typedef struct {
