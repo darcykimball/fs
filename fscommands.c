@@ -160,7 +160,99 @@ void createf(size_t argc, char** argv) {
 
 void extendf(size_t argc, char** argv) {
   // TODO/FIXME: implement users/permissions!!
+  fs_node* file; // File to extend
+  char name[BUFSIZ]; // For saving argument since find() may mangle it
+  unsigned int bytes_to_extend; // Size in bytes to shrink the file
+  char* end; // For use with strtol()
+  unsigned int last_offset; // Offset into the last block
+  unsigned int new_size_blocks; // New number of blocks used
+  unsigned int new_size_bytes;// New number of blocks used
+  int block_index; // Temp index or newly requested blocks
+  index_node* inode; // Temp node for traversing
   
+  // Check args
+  if (argc != 3) {
+    fprintf(stderr, "extendf(): Usage: file bytes_to_extend\n");
+    return;
+  }
+
+  // Get size to extend
+  bytes_to_extend = (unsigned int)strtol(argv[2], &end, 10);
+  if (*end != '\0') {
+    fprintf(stderr, "extendf(): bytes_to_shrink is not an integer\n");
+    return;
+  }
+
+  // Save the name
+  strcpy(name, argv[1]);
+
+  // Find the file
+  file = find(argv[1]);
+  if (file == NULL) {
+    fprintf(stderr, "extendf(): file %s not found\n", name);
+    return;
+  }
+
+  // Check that it's a regular file
+  if (file->entry->type == DIRY) {
+    fprintf(stderr, "extendf(): %s is not a regular file\n", name);
+    return;
+  }
+
+  // Calculate new size
+  new_size_bytes = file->entry->size_bytes + bytes_to_extend;
+
+  // Calculate the number of blocks to add, if necessary
+  new_size_blocks = new_size_bytes/BLOCK_SIZE;
+  if (new_size_bytes % BLOCK_SIZE != 0) {
+    new_size_blocks++;
+  }
+
+  // Check if there's space
+  if (new_size_blocks - file->entry->size_blocks > num_free_blocks) {
+    fprintf(stderr, "extendf(): no space left!\n");
+    return;
+  }
+
+  // Calculate offset into the last block
+  last_offset = new_size_bytes < BLOCK_SIZE ?
+           new_size_bytes
+         : new_size_bytes % BLOCK_SIZE;
+
+  // Request blocks as needed
+  for (unsigned int i = 0; i < new_size_blocks - file->entry->size_blocks; i++) {
+    block_index = get_block(); 
+
+    if (block_index == -1) {
+      fprintf(stderr, "extendf(): impossible happened: no free blocks\n");
+      return;
+    }
+
+    // Allocate a new inode and insert to tail of the entry's list
+    insert_inode(block_index, 0, file->entry);
+  }
+  
+  // Update offsets; every inode's offset except the last will be 0
+  // Also overwrite the contents appropriately
+  // XXX: this does a lot of unnecessary work
+  inode = file->entry->inode_head;
+  while (inode != file->entry->inode_tail) {
+    inode->offset = 0;
+    memset(disk + inode->index * sizeof(block), 0xAA, sizeof(block));
+
+    inode = inode->next;
+  }
+  
+  file->entry->inode_tail->offset = last_offset;
+  if (last_offset != 0) {
+    memset(disk + inode->index * sizeof(block), 0xAA, last_offset);
+  } else {
+    memset(disk + inode->index * sizeof(block), 0xAA, sizeof(block));
+  }
+                  
+  // Update size fields
+  file->entry->size_bytes = new_size_bytes;
+  file->entry->size_blocks = new_size_blocks;
 }
 
 void trncf(size_t argc, char** argv) {
@@ -190,7 +282,7 @@ void trncf(size_t argc, char** argv) {
   // Save the name
   strcpy(name, argv[1]);
 
-  // FInd the file
+  // Find the file
   file = find(argv[1]);
   if (file == NULL) {
     fprintf(stderr, "trncf(): file %s not found\n", name);
@@ -215,7 +307,7 @@ void trncf(size_t argc, char** argv) {
   new_size_bytes = file->entry->size_bytes - bytes_to_shrink;
 
   // Calculate the number of blocks to free
-  new_size_blocks= new_size_bytes/BLOCK_SIZE;
+  new_size_blocks = new_size_bytes/BLOCK_SIZE;
   if (new_size_bytes % BLOCK_SIZE != 0) {
     new_size_blocks++;
   }
