@@ -11,7 +11,8 @@
 extern user_id curr_user; // Current user
 extern fs_node* curr_dir_node; // The current directory
 extern fs_node* root_node; // Root directory
-extern command_pair command_map[NUM_COMMANDS];
+extern command_pair command_map[NUM_COMMANDS]; // Map of command strings to 
+                                               // the functions to invoke
 
 //
 // XXX: The filepaths these functions are expecting are interpreted as follows:
@@ -19,6 +20,9 @@ extern command_pair command_map[NUM_COMMANDS];
 //    root directory
 //   -Otherwise, the current directory is prepended to the string to form
 //    the full path
+//
+// If no documentation is given for a function below, it does what the assign-
+// ment requests.
 //
 
 // List current directory

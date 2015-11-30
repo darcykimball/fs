@@ -31,7 +31,7 @@ typedef unsigned int user_id;
 typedef enum {
   READ, // Read permission
   RDWR, // Read/write
-  SYML  // Symbolic link!?? FIXME
+  SYML  // Symbolic link!?? FIXME: unused
 } permissions;
 
 // An index node; to be used in singly linked list
@@ -83,7 +83,7 @@ fs_node* new_fs_node(fs_entry* entry, fs_node* parent);
 // freed, etc.).
 void delete_fs_node(fs_node** nodepp);
 
-// Make a fresh filesystem tree with a single directory.
+// Make a fresh filesystem tree with a single directory called 'root'.
 fs_node* new_fs_tree();
 
 // Insert an index node into an entry's inode list (at tail)
@@ -103,11 +103,8 @@ void unlink_child(fs_node* child);
 void delete_inode_list(fs_entry* entry);
 
 //
-// Debugging/print functions TODO
+// Debugging/print functions
 //
-
-// Dump the tree rooted at the given node TODO?
-void dump_fs_tree(fs_node* node);
 
 // Print out the full path ending at the given node
 void dump_path(fs_node* node);
