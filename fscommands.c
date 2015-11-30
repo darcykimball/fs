@@ -380,7 +380,8 @@ void deletefd(size_t argc, char** argv) {
 
     // Check if it's a directory
     if (file->entry->type == DIRY) {
-      // TODO/FIXME
+      // This is a directory; do recursive delete
+      delete_dir(file);
     } else {
       // This is a regular file
       delete_file(file);

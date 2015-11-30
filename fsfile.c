@@ -119,9 +119,27 @@ void delete_file(fs_node* file_node) {
   delete_fs_node(&file_node);
 }
 
-
+// XXX: deleting root leads to undefined behavior!!
 void delete_dir(fs_node* dir_node) {
-  index_node* inode; // For traversing through index node list
-  // TODO
+  fs_node* node; // Temp node for traversing; for readability
+
+  // Unlink from parent
+  unlink_child(dir_node);
+
+  // Delete each child
+  for (unsigned int c = 0; c < dir_node->num_children; c++) {
+    node = dir_node->children[c];
+    
+    // Check if directory
+    if (node->entry->type == DIRY) {
+      // It's a directory; delete recursively
+      delete_dir(node);
+    } else {
+      delete_fs_node(&node);
+    }
+  }
+
+  // Free this
+  delete_fs_node(&dir_node);
 }
 
