@@ -28,14 +28,6 @@ fs_node* new_file(char* name, file_type type, user_id user, permissions perms,
     }
   }
 
-  node = new_fs_node(entry, curr_dir_node);
-
-  // Sanity check
-  if (node == NULL) {
-    fprintf(stderr, "new_file(): couldn't init fs_node!\n");
-    return NULL;
-  }
-
   // Calculate the number of blocks needed
   num_blocks_needed = size_bytes/BLOCK_SIZE;
   if (size_bytes % BLOCK_SIZE != 0) {
@@ -46,7 +38,22 @@ fs_node* new_file(char* name, file_type type, user_id user, permissions perms,
   last_offset = size_bytes < BLOCK_SIZE ?
            size_bytes
          : size_bytes % BLOCK_SIZE;
-  
+
+  // Check for space
+  if (num_blocks_needed > num_free_blocks) {
+    fprintf(stderr, "new_file(): no available space\n");
+    return NULL;
+  }
+ 
+  // Link a new node in
+  node = new_fs_node(entry, curr_dir_node);
+
+  // Sanity check
+  if (node == NULL) {
+    fprintf(stderr, "new_file(): couldn't init fs_node!\n");
+    return NULL;
+  }
+
   // Attempt to allocate/initialize blocks
   for (unsigned int i = 0; i < num_blocks_needed; i++) {
     // Request a block from disk
@@ -54,8 +61,7 @@ fs_node* new_file(char* name, file_type type, user_id user, permissions perms,
 
     if (block_index == -1) {
       // No space was left. Delete what was allocated so far
-      // TODO/FIXME!!
-      fprintf(stderr, "new_file(): no space left on disk!\n");
+      fprintf(stderr, "new_file(): impossible/irrecoverable error: no space left on disk!\n");
       return NULL;
     }
 
