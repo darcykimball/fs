@@ -6,10 +6,9 @@
 
 #define MAX_N_TOKENS 100 // Maximum filepath tokens
 
-// FIXME
 fs_node* curr_dir_node = NULL;
 fs_node* root_node = NULL;
-user_id curr_user = 0; // FIXME!!
+user_id curr_user = 0;
 
 // Split input string on slashes, setting 'tokens' to contain the array
 // of token strings. Returns the number of tokens.
@@ -110,7 +109,6 @@ void maked(size_t argc, char** argv) {
   }
   
   // Allocate new directory entry; put it under current directory
-  // FIXME: implement permissions!?
   dir = new_dir(argv[1], curr_user, RDWR, curr_dir_node);
 
   if (dir == NULL) {
@@ -181,12 +179,9 @@ void createf(size_t argc, char** argv) {
     fprintf(stderr, "createf(): could not create file\n");
     return;
   }
-
-  // TODO/FIXME: implement users/permissions!!
 }
 
 void extendf(size_t argc, char** argv) {
-  // TODO/FIXME: implement users/permissions!!
   fs_node* file; // File to extend
   char name[BUFSIZ]; // For saving argument since find() may mangle it
   unsigned int bytes_to_extend; // Size in bytes to shrink the file
@@ -290,7 +285,6 @@ void extendf(size_t argc, char** argv) {
 }
 
 void trncf(size_t argc, char** argv) {
-  // TODO/FIXME: implement users/permissions!!
   fs_node* file; // File to truncate
   char name[BUFSIZ]; // For saving argument since find() may mangle it
   unsigned int bytes_to_shrink; // Size in bytes to shrink the file
@@ -391,7 +385,7 @@ void deletefd(size_t argc, char** argv) {
   fs_node* file; // File or directory to delete
   char name[BUFSIZ]; // For saving arguments since find() may mangle it
 
-  // TODO/FIXME: implement users/permissions!!
+  // Check args
   if (argc < 2) {
     fprintf(stderr, "deletefd(): I take at least 1 argument\n");
   }
