@@ -104,7 +104,7 @@ void maked(size_t argc, char** argv) {
   // Check permissions
   if (curr_dir_node->entry->perms != RDWR) {
     // Don't have permission
-    fprintf(stderr, "maked(): you (user %u) don't have permission\n", curr_user);
+    printf("maked(): you (user %u) don't have permission\n", curr_user);
     return;
   }
   
@@ -133,7 +133,7 @@ void createf(size_t argc, char** argv) {
   // Check permissions
   if (curr_dir_node->entry->perms != RDWR) {
     // Don't have permission
-    fprintf(stderr, "createf(): you (user %u) don't have permission\n", curr_user);
+    printf("createf(): you (user %u) don't have permission\n", curr_user);
     return;
   }
   
@@ -215,7 +215,7 @@ void extendf(size_t argc, char** argv) {
   // Check permissions
   if (file->entry->perms != RDWR) {
     // Don't have permission
-    fprintf(stderr, "extendf(): you (user %u) don't have permission\n", curr_user);
+    printf("extendf(): you (user %u) don't have permission\n", curr_user);
     return;
   }
 
@@ -317,7 +317,7 @@ void trncf(size_t argc, char** argv) {
   // Check permissions
   if (file->entry->perms != RDWR) {
     // Don't have permission
-    fprintf(stderr, "trncf(): you (user %u) don't have permission\n", curr_user);
+    printf("trncf(): you (user %u) don't have permission\n", curr_user);
     return;
   }
 
@@ -403,7 +403,7 @@ void deletefd(size_t argc, char** argv) {
     // Check permissions
     if (file->entry->perms != RDWR) {
       // Don't have permission
-      fprintf(stderr, "deletefd(): you (user %u) don't have permission\n", curr_user);
+      printf("deletefd(): you (user %u) don't have permission\n", curr_user);
       return;
     }
 
@@ -557,7 +557,7 @@ void movf(size_t argc, char** argv) {
   // Check permissions
   if (file->entry->perms != RDWR) {
     // Don't have permission
-    fprintf(stderr, "movf(): you (user %u) don't have permission\n", curr_user);
+    printf("movf(): you (user %u) don't have permission\n", curr_user);
     return;
   }
 
@@ -570,7 +570,7 @@ void movf(size_t argc, char** argv) {
   // Check permissions
   if (dir->entry->perms != RDWR) {
     // Don't have permission
-    fprintf(stderr, "movf(): you (user %u) don't have permission\n", curr_user);
+    printf("movf(): you (user %u) don't have permission\n", curr_user);
     return;
   }
 
