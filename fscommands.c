@@ -306,7 +306,7 @@ void trncf(size_t argc, char** argv) {
   }
 
   // Check that we wouldn't be truncating to zero size
-  if (file->entry->size_bytes < bytes_to_shrink) {
+  if (file->entry->size_bytes <= bytes_to_shrink) {
     fprintf(stderr, 
       "trncf(): cannot shrink to 0 size: choose a number less than %u\n",
       file->entry->size_bytes);
