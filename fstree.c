@@ -70,10 +70,8 @@ fs_node* new_fs_node(fs_entry* entry, fs_node* parent) {
 void delete_fs_node(fs_node** nodepp) {
   fs_node* nodeptr = *nodepp; // For readability
 
-  // Delete each of the child nodes
-  for (unsigned int i = 0; i < nodeptr->num_children; i++) {
-    delete_fs_node(&(nodeptr->children[i]));
-  }
+  // XXX: Up to caller to free nodes in child list; easier this way since
+  // there's other cleanup that needs to be done when files are deleted
 
   // Delete the index node list
   delete_inode_list(nodeptr->entry);

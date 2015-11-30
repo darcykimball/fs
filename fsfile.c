@@ -135,7 +135,7 @@ void delete_dir(fs_node* dir_node) {
       // It's a directory; delete recursively
       delete_dir(node);
     } else {
-      delete_fs_node(&node);
+      delete_file(node);
     }
   }
 

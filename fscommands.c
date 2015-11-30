@@ -382,6 +382,12 @@ void deletefd(size_t argc, char** argv) {
     if (file->entry->type == DIRY) {
       // This is a directory; do recursive delete
       delete_dir(file);
+
+      // For simplicity, navigate back to the root directory in case we just
+      // deleted a directory we were under
+      curr_dir_node = root_node;
+
+      printf("Moved back to root directory\n");
     } else {
       // This is a regular file
       delete_file(file);
