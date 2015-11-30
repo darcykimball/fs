@@ -165,7 +165,93 @@ void extendf(size_t argc, char** argv) {
 
 void trncf(size_t argc, char** argv) {
   // TODO/FIXME: implement users/permissions!!
+  fs_node* file; // File to truncate
+  char name[BUFSIZ]; // For saving argument since find() may mangle it
+  unsigned int bytes_to_shrink; // Size in bytes to shrink the file
+  char* end; // For use with strtol()
+  unsigned int last_offset; // Offset into the last block
+  unsigned int new_size_blocks; // New number of blocks used
+  unsigned int new_size_bytes;// New number of blocks used
+  index_node* inode; // For iterating through index nodes to free
 
+  // Check args
+  if (argc != 3) {
+    fprintf(stderr, "trncf(): Usage: file bytes_to_shrink\n");
+    return;
+  }
+
+  // Get size to shrink
+  bytes_to_shrink = (unsigned int)strtol(argv[2], &end, 10);
+  if (*end != '\0') {
+    fprintf(stderr, "trncf(): bytes_to_shrink is not an integer\n");
+    return;
+  }
+
+  // Save the name
+  strcpy(name, argv[1]);
+
+  // FInd the file
+  file = find(argv[1]);
+  if (file == NULL) {
+    fprintf(stderr, "trncf(): file %s not found\n", name);
+    return;
+  }
+
+  // Check that it's a regular file
+  if (file->entry->type == DIRY) {
+    fprintf(stderr, "trncf(): %s is not a regular file\n", name);
+    return;
+  }
+
+  // Check that we wouldn't be truncating to zero size
+  if (file->entry->size_bytes < bytes_to_shrink) {
+    fprintf(stderr, 
+      "trncf(): cannot shrink to 0 size: choose a number less than %u\n",
+      file->entry->size_bytes);
+    return;
+  }
+
+  // Calculate new size
+  new_size_bytes = file->entry->size_bytes - bytes_to_shrink;
+
+  // Calculate the number of blocks to free
+  new_size_blocks= new_size_bytes/BLOCK_SIZE;
+  if (new_size_bytes % BLOCK_SIZE != 0) {
+    new_size_blocks++;
+  }
+
+  // Calculate offset into the last block
+  last_offset = new_size_bytes < BLOCK_SIZE ?
+           new_size_bytes
+         : new_size_bytes % BLOCK_SIZE;
+
+  // Free the necessary blocks
+  for (unsigned int i = 0; i < file->entry->size_blocks - new_size_blocks; i++)
+  {
+    inode = remove_inode_tail(file->entry); 
+
+    if (inode == NULL) {
+      fprintf(stderr, "trncf(): impossible happened: file had no blocks\n");
+      return;
+    }
+
+    // Free the 'disk' block
+    free_block(inode->index);
+
+    // Deallocate
+    free(inode);
+  }
+
+  // 'Clear' unused portion of last block
+  if (last_offset != 0) {
+    memset(disk + file->entry->inode_tail->index * sizeof(block) 
+      + last_offset, 0, sizeof(block) - last_offset);
+  }
+  
+  // Update size fields, offset of last node
+  file->entry->size_bytes = new_size_bytes;
+  file->entry->size_blocks = new_size_blocks;
+  file->entry->inode_tail->offset = last_offset;
 }
 
 void deletefd(size_t argc, char** argv) {

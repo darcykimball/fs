@@ -86,9 +86,12 @@ void delete_fs_node(fs_node** nodepp);
 // Make a fresh filesystem tree with a single directory.
 fs_node* new_fs_tree();
 
-// Insert an index node into an entry's inode list
+// Insert an index node into an entry's inode list (at tail)
 void insert_inode(unsigned int block_index, unsigned int offset,
   fs_entry* entry);
+
+// Remove/delete the tail of an inode list; returns the removed node
+index_node* remove_inode_tail(fs_entry* entry);
 
 // Add a child to a directory node; returns -1 for error, 0 otherwise
 int insert_child(fs_node* new_child, fs_node* dir);

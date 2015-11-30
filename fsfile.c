@@ -101,7 +101,7 @@ void delete_file(fs_node* file_node) {
   // Unlink from parent
   unlink_child(file_node);
 
-  // Free the disk blocks TODO
+  // Free the disk blocks
   while (inode != NULL) {
     // Free this block, i.e. return it to the free list
     free_block(inode->index);

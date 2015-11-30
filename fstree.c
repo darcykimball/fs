@@ -123,6 +123,33 @@ void insert_inode(unsigned int block_index, unsigned int offset,
   }
 }
 
+index_node* remove_inode_tail(fs_entry* entry) {
+  index_node* node = entry->inode_head; // Temp node for traversing
+  index_node* old_tail = entry->inode_tail; // Return value
+
+  // Sanity check; for debuggning
+  if (entry == NULL || node == NULL || old_tail == NULL) {
+    return NULL;
+  }
+
+  // Special case: only one node
+  if (node->next == NULL) {
+    entry->inode_head = entry->inode_tail = NULL;
+    return old_tail;
+  }
+
+  // Traverse to 2nd to last node
+  while (node->next != entry->inode_tail) {
+    node++;
+  }
+
+  // Unlink the tail
+  entry->inode_tail = node;
+  node->next = NULL;
+
+  return old_tail;
+}
+
 int insert_child(fs_node* new_child, fs_node* dir) {
   // Sanity check
   if (new_child == NULL || dir == NULL) {
